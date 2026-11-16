@@ -1,0 +1,60 @@
+local R=game:GetService("ReplicatedStorage").RE
+local P=game.Players.LocalPlayer
+local Players=game:GetService("Players")
+
+-- Tera spoofed name
+local N="ʀᴜʙᴏ ᴄʜᴀᴛ"
+local B="ᴡᴇʟᴄᴏᴍᴇ"
+
+-- Local player ka setup
+R["1RPNam1eTex1t"]:FireServer("RolePlayName",N)
+R["1RPNam1eTex1t"]:FireServer("RolePlayBio",B)
+
+-- Rainbow color cycle
+task.spawn(function()
+	local h=0
+	while true do
+		local c=Color3.fromHSV(h,1,1)
+		R["1RPNam1eColo1r"]:FireServer("PickingRPNameColor",c)
+		R["1RPNam1eColo1r"]:FireServer("PickingRPBioColor",c)
+		h=(h+0.01)%1
+		task.wait(0.03)
+	end
+end)
+
+-- Function to spoof all players
+local function spoofAllPlayers()
+	for _,target in pairs(Players:GetPlayers()) do
+		if target~=P then
+			-- Fire for each player with their user ID
+			R["1RPNam1eTex1t"]:FireServer("RolePlayName",N,target)
+			R["1RPNam1eTex1t"]:FireServer("RolePlayBio",B,target)
+			
+			-- Color bhi set karo
+			local h=0
+			task.spawn(function()
+				while true do
+					local c=Color3.fromHSV(h,1,1)
+					R["1RPNam1eColo1r"]:FireServer("PickingRPNameColor",c,target)
+					h=(h+0.1)%1
+					task.wait(0.1)
+				end
+			end)
+		end
+	end
+end
+
+-- Jab koi chat kare toh sabka naam change
+Players.PlayerChatted:Connect(function(player,message)
+	-- Chat detect hote hi sabko spoof karo
+	spoofAllPlayers()
+end)
+
+-- Manual trigger ke liye - tera chat suno
+P.Chatted:Connect(function(msg)
+	if msg:lower()=="!spoofall" then
+		spoofAllPlayers()
+	end
+end)
+
+print("Rubo Chat Spoofer Loaded - Chat karo aur sabka naam badlo")
